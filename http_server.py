@@ -1,23 +1,7 @@
-# from http.server import HTTPServer, BaseHTTPRequestHandler
-# #
-# HOST = ''
+import logging
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 PORT = 9000
-#server_address = List['http://127.0.0.1',9000]
-# class RequestHander(BaseHTTPRequestHandler):
-#     def do_Post(self):
-#         payload_size = int(self.headers['Content-Length'])
-#         payload = self.rfile.read(payload_size)
-#         self.send_response(200)
-#         self.end_headers()
-#         self.wfile.write(payload)
-#
-#
-# server = HTTPServer(('',9500), RequestHander)
-# server.serve_forever()
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import logging
-
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -46,12 +30,6 @@ class S(BaseHTTPRequestHandler):
     def do_PUT(self):
         self.do_POST()
 
-
-
-    #def do_DELETE(self):
-
-
-
 def run(server_class=HTTPServer, handler_class=S, port=PORT):
     logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
@@ -64,11 +42,7 @@ def run(server_class=HTTPServer, handler_class=S, port=PORT):
     httpd.server_close()
     logging.info('Stopping httpd...\n')
 
-# try:
-#     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
-#     httpd.serve_forever()
-# except Exception:
-#     httpd.shutdown()
+
 
 if __name__ == '__main__':
     from sys import argv
@@ -78,7 +52,3 @@ if __name__ == '__main__':
     else:
         run()
 
-# def run(server_class=HTTPServer, handler_class=BaseHTTPRequestHandler):
-#     server_address = ('', 9500)
-#     httpd = server_class(server_address, handler_class)
-#     httpd.serve_forever()
