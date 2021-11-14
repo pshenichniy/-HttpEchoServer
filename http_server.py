@@ -9,6 +9,11 @@ class S(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
+    def payload(self):
+        payload_size = int(self.headers['Content-Length'])
+        payload = self.rfile.read(payload_size)
+        return payload
+
     def do_GET(self):
         logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
         self._set_headers()
@@ -17,18 +22,24 @@ class S(BaseHTTPRequestHandler):
     def do_POST(self):
         self._set_headers()
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
-        # content_len = int(self.headers.get('content-length', 0))
-        # post_body = self.rfile.read(content_len)
         post_data = self.rfile.read(content_length)# <--- Gets the data itself
-        # files = {'file': ('report.xls', open('report.txt', 'rb'), 'application/vnd.ms-excel', {'Expires': '0'})}
-        # post_data2 = self.rfile.read(b'files')
+
         logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
                      str(self.path), str(self.headers), post_data.decode('utf-8'))
 
         self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
 
     def do_PUT(self):
-        self.do_POST()
+        logging.info("PUT request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        self._set_headers()
+        self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
+        #self.do_PUT()
+
+    def do_DELETE(self):
+        logging.info("DELETE request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        self._set_headers()
+        self.wfile.write("DELETE request for {}".format(self.path).encode('utf-8'))
+
 
 def run(server_class=HTTPServer, handler_class=S, port=PORT):
     logging.basicConfig(level=logging.INFO)

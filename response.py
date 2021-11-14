@@ -10,3 +10,6 @@ print("Status code = ",requests.get(url).status_code)
 
 print("Put response ",requests.request('put',url).content)
 print("Status code = ",requests.put(url).status_code)
+
+print("DELETE response ",requests.request('delete',url).content)
+print("Status code = ",requests.delete(url).status_code)
