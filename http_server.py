@@ -11,34 +11,37 @@ class S(BaseHTTPRequestHandler):
 
     def payload(self):
         payload_size = int(self.headers['Content-Length'])
-        payload = self.rfile.read(payload_size)
+        payload = self.rfile.read(payload_size).decode()
         return payload
 
     def do_GET(self):
-        logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        payload = self.payload()
         self._set_headers()
-        self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
+        get_data = self.wfile.write("GET request for {} with payload: {}".format(self.path, payload).encode('utf-8'))
+        logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                     str(self.path), str(self.headers), get_data)
+
 
     def do_POST(self):
+        payload = self.payload()
         self._set_headers()
-        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
-        post_data = self.rfile.read(content_length)# <--- Gets the data itself
-
+        post_data = self.wfile.write("POST: {}".format(payload).encode('utf-8'))
         logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-                     str(self.path), str(self.headers), post_data.decode('utf-8'))
-
-        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        str(self.path), str(self.headers), post_data)
 
     def do_PUT(self):
-        logging.info("PUT request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        payload = self.payload()
         self._set_headers()
-        self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
-        #self.do_PUT()
+        put_data = self.wfile.write("PUT request for {}".format(payload).encode('utf-8'))
+        logging.info("PUT request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers),put_data)
 
     def do_DELETE(self):
-        logging.info("DELETE request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        payload = self.payload()
         self._set_headers()
-        self.wfile.write("DELETE request for {}".format(self.path).encode('utf-8'))
+        del_data = self.wfile.write("DELETE request for {}".format(payload).encode('utf-8'))
+        logging.info("DELETE request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers),del_data)
+
+
 
 
 def run(server_class=HTTPServer, handler_class=S, port=PORT):
